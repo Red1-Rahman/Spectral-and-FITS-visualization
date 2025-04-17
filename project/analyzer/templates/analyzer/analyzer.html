@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectral and FITS File Analyzer</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #343a40;
+        }
+
+        .form-container {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .result-image {
+            max-width: 100%;
+            height: auto;
+            margin-top: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .result-text {
+            margin-top: 15px;
+            white-space: pre-wrap;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .alert {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="mb-4">Spectral and FITS File Analyzer</h1>
+
+        <div class="form-container">
+            <h2>Upload Spectral Image</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ spectral_form.spectral_image.label_tag }}
+                    {{ spectral_form.spectral_image }}
+                </div>
+                <div class="form-group">
+                    {{ spectral_form.calibration_coefficients.label_tag }}
+                    {{ spectral_form.calibration_coefficients }}
+                    <small class="form-text text-muted">Enter calibration coefficients (a, b) separated by a
+                        comma.</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Analyze Spectral Image</button>
+            </form>
+            {% if spectral_plot %}
+            <h3>Processed Spectral Image:</h3>
+            <img src="data:image/png;base64,{{ spectral_plot }}" alt="Processed Spectral Image" class="result-image">
+            {% endif %}
+            {% if spectral_insights %}
+            <h3>Spectral Line Identification:</h3>
+            <p class="result-text">{{ spectral_insights }}</p>
+            {% endif %}
+            {% if spectral_form.errors %}
+            <div class="alert alert-danger">{{ spectral_form.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-container">
+            <h2>Upload FITS File</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ fits_form.fits_file.label_tag }}
+                    {{ fits_form.fits_file }}
+                </div>
+                <button type="submit" class="btn btn-primary">Visualize FITS File</button>
+            </form>
+            {% if fits_plot %}
+            <h3>FITS File Visualization:</h3>
+            <img src="data:image/png;base64,{{ fits_plot }}" alt="FITS Image" class="result-image">
+            {% endif %}
+            {% if fits_status %}
+            <h3>FITS Processing Status:</h3>
+            <p class="result-text">{{ fits_status }}</p>
+            {% endif %}
+            {% if fits_form.errors %}
+            <div class="alert alert-danger">{{ fits_form.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
